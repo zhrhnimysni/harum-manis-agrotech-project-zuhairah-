@@ -1,656 +1,435 @@
-```html
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="ms" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Harumanis Agrotech Derivative Simulator</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Harumanis Mango Growth Rate & Derivative Analyzer</title>
+    <!-- Tailwind CSS untuk gaya UI premium moden -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        emerald: {
-                            50: '#ecfdf5',
-                            100: '#d1fae5',
-                            200: '#a7f3d0',
-                            300: '#6ee7b7',
-                            400: '#34d399',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            800: '#065f46',
-                            900: '#064e3b',
-                            950: '#022c22',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Chart.js CDN -->
+    <!-- Chart.js untuk visualisasi data graf yang lancar -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- KaTeX CDN for beautiful mathematical equations -->
+    <!-- KaTeX untuk paparan formula matematik yang cantik -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
-    <!-- Lucide Icons -->
+    <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=300;400;500;600;700;800&display=swap');
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
+        .math-block {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 4px solid #10b981;
+        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-emerald-500 selection:text-slate-950">
+<body class="bg-slate-950 text-slate-100 min-h-full flex flex-col selection:bg-emerald-500 selection:text-slate-950">
 
-    <!-- Header / Navigation -->
-    <header class="border-b border-slate-900 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <!-- Header Halaman -->
+    <header class="border-b border-slate-900 bg-slate-950/50 backdrop-blur-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="p-2 bg-emerald-500/10 rounded-xl border border-emerald-500/20 text-emerald-400">
-                    <i data-lucide="sprout" class="w-6 h-6"></i>
+            <div class="flex items-center gap-3">
+                <div class="bg-emerald-500/10 p-2 rounded-xl border border-emerald-500/20">
+                    <i data-lucide="sprout" class="w-6 h-6 text-emerald-400"></i>
                 </div>
                 <div>
-                    <span class="font-bold text-lg tracking-tight bg-gradient-to-r from-emerald-400 to-teal-300 bg-clip-text text-transparent">AgroMath Analytics</span>
-                    <span class="text-xs block text-slate-400">Malaysian Agrotechnology (SFA: Agrotech) Module</span>
+                    <h1 class="text-lg font-bold text-white tracking-tight flex items-center gap-2">
+                        HarumManis <span class="text-xs bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded-full font-medium border border-emerald-500/20">Agrotech V2</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Mathematical Optimization & Analytics</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-2 bg-slate-900 border border-slate-800 rounded-full px-3 py-1 text-xs text-emerald-400">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Active Model: Harumanis (MA224) Growth Kinetics</span>
+            <div class="flex items-center gap-4">
+                <span class="text-xs text-slate-400 hidden sm:inline-block">Mathematical Modeling Framework</span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Tata Letak Konten Utama -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
         
-        <!-- Welcome & Scenario Intro Card -->
-        <div class="relative overflow-hidden rounded-3xl border border-slate-900 bg-gradient-to-br from-slate-900 via-slate-950 to-emerald-950/20 p-6 sm:p-8 mb-8">
-            <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-                <i data-lucide="trending-up" class="w-48 h-48 text-emerald-400"></i>
-            </div>
-            <div class="max-w-3xl">
-                <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold mb-4">
-                    <i data-lucide="graduation-cap" class="w-3.5 h-3.5"></i>
-                    <span>SFA: Agrotech Undergraduate Case Study</span>
-                </div>
-                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">
-                    Derivative $f'(x)$ Applications in Malaysian Horticulture
-                </h1>
-                <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-6">
-                    In Perlis, the high-value <strong>Harumanis mango</strong> (<em>Mangifera indica</em> 'MA224') relies on perfect microclimatic scheduling. For an agrotechnologist, tracking mere fruit weight $f(x)$ is insufficient. Calculating the <strong>instantaneous growth rate</strong> via the derivative $f'(x)$ is vital to identify the exact onset of the <em>cell division</em>, <em>cell expansion</em>, and <em>ripening phases</em>. This enables optimized irrigation, strategic potassium enrichment, and precise harvest predictions to meet premium Grade A exports.
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex items-start space-x-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                        <i data-lucide="scale" class="text-emerald-400 w-5 h-5 mt-1"></i>
-                        <div>
-                            <span class="font-semibold block text-sm text-slate-200">Perlis Agriculture Dept. Standards</span>
-                            <span class="text-xs text-slate-400">Grade A (&gt;400g), Grade B (351g-399g), Grade C (&lt;351g).</span>
-                        </div>
-                    </div>
-                    <div class="flex items-start space-x-3 bg-slate-900/60 p-3 rounded-xl border border-slate-800">
-                        <i data-lucide="line-chart" class="text-emerald-400 w-5 h-5 mt-1"></i>
-                        <div>
-                            <span class="font-semibold block text-sm text-slate-200">Logistic Growth Kinetics</span>
-                            <span class="text-xs text-slate-400">Fits observed orchard weights over a 12-week development window.</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- The Mathematical Model Formulas -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
-            <div class="lg:col-span-1 bg-slate-900 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                    <h3 class="text-lg font-bold text-slate-200 mb-3 flex items-center space-x-2">
-                        <i data-lucide="variable" class="w-5 h-5 text-emerald-400"></i>
-                        <span>The Mathematical Model</span>
-                    </h3>
-                    <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-                        Fruit weight behaves as a Sigmoidal Logistic Growth Curve. The weight $W(t)$ at week $t$ after anthesis (flowering) is described by:
-                    </p>
-                    
-                    <!-- Formula Box -->
-                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center py-5 my-4 overflow-x-auto">
-                        <div class="text-emerald-400 text-lg">
-                            $$f(t) = \frac{L}{1 + e^{-k(t - t_0)}}$$
-                        </div>
-                    </div>
-
-                    <div class="text-xs text-slate-400 space-y-2 mt-4 bg-slate-950/50 p-3 rounded-lg border border-slate-900">
-                        <div class="flex justify-between"><strong>Asymptote ($L$):</strong> <span>450 grams (Max Genetic Limit)</span></div>
-                        <div class="flex justify-between"><strong>Inflection Point ($t_0$):</strong> <span>Week 6 (Peak expansion)</span></div>
-                        <div class="flex justify-between"><strong>Growth Constant ($k$):</strong> <span>0.65 (Development kinetics factor)</span></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-1 bg-slate-900 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                    <h3 class="text-lg font-bold text-slate-200 mb-3 flex items-center space-x-2">
-                        <i data-lucide="calculator" class="w-5 h-5 text-emerald-400"></i>
-                        <span>The Growth Rate Derivative</span>
-                    </h3>
-                    <p class="text-sm text-slate-400 mb-4 leading-relaxed">
-                        By applying the Chain Rule of calculus to $f(t)$, we resolve the <strong>instantaneous growth rate</strong> $f'(t)$ (grams per week):
-                    </p>
-
-                    <!-- Derivative Box -->
-                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 text-center py-5 my-4 overflow-x-auto">
-                        <div class="text-emerald-400 text-lg">
-                            $$f'(t) = \frac{L \cdot k \cdot e^{-k(t - t_0)}}{(1 + e^{-k(t - t_0)})^2}$$
-                        </div>
-                    </div>
-
-                    <div class="text-xs text-slate-300 leading-relaxed bg-slate-950/50 p-3 rounded-lg border border-slate-900">
-                        <span class="text-emerald-400 font-semibold block mb-1">Agrotech Shortcut Formula:</span>
-                        Calculus proves that for logistic functions, the rate of change can also be modeled dynamically relative to size:
-                        <div class="mt-1 text-center font-mono text-emerald-300">
-                            $$f'(t) = k \cdot f(t) \left(1 - \frac{f(t)}{L}\right)$$
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="lg:col-span-1 bg-slate-900 border border-slate-800/80 rounded-2xl p-6 flex flex-col justify-between">
-                <div>
-                    <h3 class="text-lg font-bold text-slate-200 mb-3 flex items-center space-x-2">
-                        <i data-lucide="book-open" class="w-5 h-5 text-emerald-400"></i>
-                        <span>Why Derivatives Matter here?</span>
-                    </h3>
-                    <ul class="space-y-3 text-sm text-slate-300">
-                        <li class="flex items-start space-x-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
-                            <span><strong>Week 0 - 3 (Lag Phase):</strong> High cell division, minimal size expansion. Needs phosphorus.</span>
-                        </li>
-                        <li class="flex items-start space-x-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
-                            <span><strong>Week 4 - 8 (Log/Peak Phase):</strong> Absolute highest derivative values. Excessive water swings now trigger mango skin splitting!</span>
-                        </li>
-                        <li class="flex items-start space-x-2">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 shrink-0 mt-0.5"></i>
-                            <span><strong>Week 9 - 12 (Maturing Phase):</strong> Derivative drops close to 0. Growth slows as sugars and starch build up.</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <!-- Interactive Plot & Dynamic Analytics Control -->
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Kolom Kiri: Panel Kontrol & Presentasi Persamaan -->
+        <section class="lg:col-span-4 flex flex-col gap-6">
             
-            <!-- Graph Visualization Column (Span 2) -->
-            <div class="lg:col-span-2 bg-slate-900 border border-slate-800/80 rounded-3xl p-4 sm:p-6 flex flex-col justify-between">
+            <!-- Kartu Persamaan Matematika -->
+            <div class="bg-slate-900/40 border border-slate-900 rounded-3xl p-6 backdrop-blur-sm flex flex-col justify-between">
                 <div>
-                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 gap-2">
-                        <div>
-                            <h2 class="text-xl font-bold text-slate-200">Interactive Growth & Rate Curve</h2>
-                            <p class="text-xs text-slate-400">Click anywhere on the plot lines or use the automatic play button below</p>
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="function-square" class="w-4 h-4 text-emerald-400"></i>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Model Tumbesaran Logistik</h2>
+                    </div>
+                    <p class="text-sm text-slate-300 mb-4 leading-relaxed">
+                        Berat buah diramal menggunakan model pertumbuhan logistik berasaskan masa (minggu):
+                    </p>
+                    <div class="math-block p-4 rounded-xl mb-4 text-center overflow-x-auto text-lg">
+                        $$f(t) = \frac{L}{1 + e^{-k(t - t_0)}}$$
+                    </div>
+                </div>
+                
+                <div class="border-t border-slate-900 pt-4 mt-2">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="variable" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <span class="text-xs font-semibold text-slate-400">Pemalar Model Semasa:</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                        <div class="bg-slate-950/50 p-2 rounded-lg border border-slate-900">
+                            <span class="block text-slate-500">L (Maks)</span>
+                            <span id="valL" class="font-bold text-white">420g</span>
                         </div>
-                        <div class="flex space-x-4 text-xs">
-                            <span class="flex items-center"><span class="w-3 h-3 bg-emerald-500 rounded-full mr-1.5 inline-block"></span>Weight $f(t)$</span>
-                            <span class="flex items-center"><span class="w-3 h-1 bg-yellow-400 rounded-full mr-1.5 inline-block"></span>Rate $f'(t)$</span>
+                        <div class="bg-slate-950/50 p-2 rounded-lg border border-slate-900">
+                            <span class="block text-slate-500">k (Kadar)</span>
+                            <span id="valK" class="font-bold text-white">0.080</span>
+                        </div>
+                        <div class="bg-slate-950/50 p-2 rounded-lg border border-slate-900">
+                            <span class="block text-slate-500">t₀ (Inflex)</span>
+                            <span id="valT0" class="font-bold text-white">50 DAA</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Penyesuaian Parameter (Kalibrasi Model) -->
+            <div class="bg-slate-900/40 border border-slate-900 rounded-3xl p-6 backdrop-blur-sm">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="sliders" class="w-4 h-4 text-emerald-400"></i>
+                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Kalibrasi Model</h2>
+                    </div>
+                    <button id="resetParamsBtn" type="button" class="text-[10px] text-emerald-400 hover:text-emerald-300 font-medium flex items-center gap-1 transition-colors cursor-pointer">
+                        <i data-lucide="rotate-ccw" class="w-3 h-3"></i> Reset Asal
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- Slider L -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">L (Asymptote Maksimum)</span>
+                            <span id="txtL" class="text-emerald-400 font-mono">420g</span>
+                        </div>
+                        <input type="range" id="sliderL" min="300" max="600" step="5" value="420" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        <span class="text-[10px] text-slate-400 block mt-1">Had berat maksimum teoritikal Harumanis matang.</span>
+                    </div>
+
+                    <!-- Slider k -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">k (Kadar Pertumbuhan)</span>
+                            <span id="txtK" class="text-emerald-400 font-mono">0.080</span>
+                        </div>
+                        <input type="range" id="sliderK" min="0.05" max="0.15" step="0.005" value="0.08" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        <span class="text-[10px] text-slate-400 block mt-1">Berubah mengikut suhu persekitaran, cuaca dan pembajaan.</span>
+                    </div>
+
+                    <!-- Slider t0 -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span class="text-slate-400">t₀ (Titik Inflexion - Hari)</span>
+                            <span id="txtT0" class="text-emerald-400 font-mono">50 DAA</span>
+                        </div>
+                        <input type="range" id="sliderT0" min="35" max="65" step="1" value="50" class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500">
+                        <span class="text-[10px] text-slate-400 block mt-1">Hari di mana kadar pertumbuhan harian mencapai puncak tertinggi.</span>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Kolom Kanan: Analisis Interaktif & Graf Dinamik -->
+        <section class="lg:col-span-8 flex flex-col gap-6 items-stretch">
+            
+            <!-- Kartu Simulasi -->
+            <div class="bg-slate-900/40 border border-slate-900 rounded-3xl p-6 backdrop-blur-sm flex flex-col justify-between items-stretch flex-1">
+                <div>
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                        <div class="flex items-center gap-2">
+                            <i data-lucide="gauge" class="w-4 h-4 text-emerald-400"></i>
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Analisis Simulasi & Kadar Terbitan</h2>
+                        </div>
+                        
+                        <!-- Indikator Data Lencana Mini -->
+                        <div class="flex gap-2 text-xs">
+                            <span id="selectedDaaBadge" class="bg-slate-950 px-3 py-1 rounded-full border border-slate-900 font-medium text-slate-300">DAY -- DAA</span>
                         </div>
                     </div>
 
-                    <!-- Chart Container -->
-                    <div class="relative w-full h-[350px] sm:h-[400px]">
+                    <!-- Wadah Graf -->
+                    <div class="relative w-full h-[320px] bg-slate-950/30 rounded-2xl border border-slate-900/50 p-4 mb-6">
                         <canvas id="growthChart"></canvas>
                     </div>
                 </div>
 
-                <!-- Slider & Play Button Controls -->
-                <div class="mt-6 p-4 bg-slate-950 rounded-2xl border border-slate-800/60">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-3">
-                        <!-- Play/Pause Button -->
-                        <button id="playButton" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/10 min-w-[170px]">
-                            <span id="playIcon">▶</span> <span id="playText">Mainkan Animasi</span>
-                        </button>
-                        
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs text-slate-400">Selected:</span>
-                            <span class="text-emerald-400 text-sm font-extrabold px-3 py-1 bg-emerald-500/10 rounded-lg border border-emerald-500/20" id="sliderValueDisplay">6.0 WAA</span>
-                        </div>
+                <!-- Kontroler Garis Waktu Interaktif (Timeline Slider) -->
+                <div class="border-t border-slate-900/60 pt-4">
+                    <div class="flex justify-between items-center mb-1 text-xs text-slate-400">
+                        <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5 text-emerald-400"></i> Garis Masa Analisis:</span>
+                        <span class="font-mono text-emerald-400 font-bold bg-emerald-500/5 px-2.5 py-0.5 rounded-md border border-emerald-500/10" id="selectedWeekTxt">Minggu 6.0</span>
                     </div>
                     
-                    <input type="range" id="weekSlider" min="0" max="12" step="0.1" value="6.0" 
-                           class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400">
-                    <div class="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
-                        <span>0.0 (Flower Stage)</span>
-                        <span>3.0 (Early Fruit)</span>
-                        <span>6.0 (Mid Expansion)</span>
-                        <span>9.0 (Late Ripening)</span>
-                        <span>12.0 (Harvest Ready)</span>
+                    <!-- BUTANG INTERAKTIF ANIMASI AUTOMATIK -->
+                    <div class="flex justify-start mb-3 mt-1">
+                        <button id="playButton" type="button" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer shadow-lg shadow-emerald-500/10">
+                            <span id="playIcon">▶</span> <span id="playText">Mainkan Animasi</span>
+                        </button>
+                    </div>
+
+                    <input type="range" id="weekSlider" min="0" max="12" step="0.1" value="6.0" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-emerald-400">
+                    <div class="flex justify-between text-[10px] text-slate-500 mt-1 px-1">
+                        <span>Minggu 0 (Pendebungaan)</span>
+                        <span>Minggu 6 (Inflexion)</span>
+                        <span>Minggu 12 (Matang/Tuan)</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Dynamic Scientific Dashboard Column -->
-            <div class="lg:col-span-1 flex flex-col gap-6">
+            <!-- Ringkasan Kuantitatif & Bagian Wawasan -->
+            <div class="bg-slate-900/40 border border-slate-900 rounded-3xl p-6 backdrop-blur-sm grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                <div class="md:col-span-1 bg-slate-950/50 p-4 rounded-2xl border border-slate-900 flex flex-col justify-center text-center h-full">
+                    <span class="text-xs text-slate-400 block mb-1">Berat Anggaran f(t):</span>
+                    <h3 id="dispWeight" class="text-3xl font-extrabold text-white tracking-tight">--g</h3>
+                    <p class="text-[10px] text-slate-500 mt-1">Berat kumulatif pada hari terpilih.</p>
+                </div>
                 
-                <!-- Derivative Calculator output -->
-                <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/30 border border-slate-800 rounded-3xl p-6 flex-1">
-                    <div class="flex items-center space-x-2 text-emerald-400 text-xs font-bold uppercase tracking-wider mb-4">
-                        <i data-lucide="fingerprint" class="w-4 h-4"></i>
-                        <span>Interactive Telemetry Display</span>
-                    </div>
-
-                    <div class="space-y-6">
-                        <!-- Stat 1: Time -->
-                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                            <span class="text-slate-400 text-sm">Target Week ($t$)</span>
-                            <span class="text-xl font-bold text-slate-200" id="telemetryWeek">6.0 WAA</span>
-                        </div>
-
-                        <!-- Stat 2: Cumulative Weight -->
-                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                            <div>
-                                <span class="text-slate-400 text-sm block">Observed Weight $f(t)$</span>
-                                <span class="text-xs text-slate-500" id="telemetryGrade">Est. Grade: B</span>
-                            </div>
-                            <span class="text-2xl font-black text-emerald-400" id="telemetryWeight">225.00g</span>
-                        </div>
-
-                        <!-- Stat 3: Instantaneous Rate of Change -->
-                        <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                            <div>
-                                <span class="text-slate-400 text-sm block">Growth Rate $f'(t)$</span>
-                                <span class="text-xs text-slate-500">Derivative at this moment</span>
-                            </div>
-                            <span class="text-2xl font-black text-yellow-400" id="telemetryRate">73.13 g/wk</span>
-                        </div>
-                    </div>
-
-                    <!-- Dynamic Bioscience Translation Box -->
-                    <div class="mt-6 p-4 bg-emerald-950/30 border border-emerald-500/20 rounded-2xl relative overflow-hidden">
-                        <div class="absolute top-0 right-0 p-2 opacity-10">
-                            <i data-lucide="biohazard" class="w-12 h-12 text-emerald-400"></i>
-                        </div>
-                        <h4 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">
-                            Biological Assessment & Layman Translation:
-                        </h4>
-                        <p class="text-slate-300 text-xs leading-relaxed" id="laymanExplanation">
-                            Loading calculations...
-                        </p>
-                    </div>
+                <div class="md:col-span-1 bg-slate-950/50 p-4 rounded-2xl border border-slate-900 flex flex-col justify-center text-center h-full">
+                    <span class="text-xs text-slate-400 block mb-1">Kadar Pertumbuhan Harian f'(t):</span>
+                    <h3 id="dispRate" class="text-3xl font-extrabold text-amber-400 tracking-tight">--g/hari</h3>
+                    <p class="text-[10px] text-slate-500 mt-1">Terbitan pertama kuantiti perubahan berat.</p>
                 </div>
 
-                <!-- Live Agricultural Grade Predictor -->
-                <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6">
-                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-1.5">
-                        <i data-lucide="award" class="w-4 h-4 text-emerald-400"></i>
-                        <span>Export Quality Projection</span>
-                    </h3>
-                    <div class="space-y-3">
-                        <div class="flex justify-between text-xs text-slate-400">
-                            <span>Predicted Harvest Size:</span>
-                            <span class="font-bold text-slate-200" id="projectedSize">438g</span>
-                        </div>
-                        <div class="flex justify-between text-xs text-slate-400">
-                            <span>Projected Grade Class:</span>
-                            <span class="font-bold text-emerald-400" id="projectedGrade">Grade A (Premium)</span>
-                        </div>
-                        <!-- Progress Visualizer -->
-                        <div class="w-full bg-slate-950 rounded-full h-2 overflow-hidden mt-1">
-                            <div class="bg-emerald-500 h-2 rounded-full" id="gradeProgressBar" style="width: 95%;"></div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- Real World Field Data and References Card -->
-        <section class="mt-8 bg-slate-900 border border-slate-800/80 rounded-3xl p-6 sm:p-8">
-            <h3 class="text-xl font-bold text-slate-200 mb-4 flex items-center space-x-2">
-                <i data-lucide="database" class="w-5 h-5 text-emerald-400"></i>
-                <span>Biological Calibration & Malaysian Research Datasets</span>
-            </h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm text-slate-300 leading-relaxed">
-                <div>
-                    <h4 class="font-bold text-emerald-400 mb-2">Mathematical Modeling details & Calibration</h4>
-                    <p class="mb-3">
-                        Our logistic growth model uses mathematical kinetics aligned with field research conducted on Harumanis mango orchards in Bukit Bintang, Perlis, Malaysia. Under ideal fertilization and automated drip irrigation, a Harumanis mango takes approx. 11 to 12 weeks from anthesis to achieve peak physiological maturity.
-                    </p>
-                    <p>
-                        The peak growth rate (inflection point where $f''(t) = 0$) occurs at exactly <strong>6 weeks after anthesis</strong>, which marks the highest demand for potassium-rich nutrient complexes (e.g., NPK 12:12:17+TE) to assist cellular sugar loading.
+                <div class="md:col-span-1 h-full flex flex-col justify-center">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1 block">Tafsiran Awam:</span>
+                    <p id="laymanExplanation" class="text-xs text-slate-300 leading-relaxed">
+                        Sila gerakkan garis masa di atas untuk melihat rumusan saintifik & fasa perkembangan buah.
                     </p>
                 </div>
-                <div>
-                    <h4 class="font-bold text-emerald-400 mb-2">Malaysia Agrotech Data Webpage Reference</h4>
-                    <ul class="space-y-3">
-                        <li class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 text-xs">
-                            <strong class="block text-slate-200 mb-1">Perlis Agriculture Department Manual:</strong>
-                            Grading standards specify Grade A as premium fresh export quality (&gt;400g). Predictive models like this allow plantation managers to implement selective bunch pruning at Week 6 if target weights project toward lower Grade C sizes.
-                        </li>
-                        <li class="bg-slate-950/50 p-3 rounded-xl border border-slate-800 text-xs">
-                            <strong class="block text-slate-200 mb-1">MARDI (Malaysian Agricultural Research and Development Institute):</strong>
-                            Research on 'MA224' growth profiles highlights that water stress during high-derivative phases (Weeks 4-7) leads to pulp cavity disorders. Tracking derivatives helps trigger dynamic soil moisture alerts.
-                        </li>
-                    </ul>
-                </div>
             </div>
+
         </section>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="mt-16 border-t border-slate-900 py-8 bg-slate-950">
-        <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-xs space-y-2">
-            <p>Designed for Agrotechnology & Bioscience undergraduates specializing in mathematical precision farming applications.</p>
-            <p>© 2026 Malaysia Agricultural Science Web-Simulation Interface.</p>
-        </div>
+    <!-- Kaki Halaman (Footer) -->
+    <footer class="border-t border-slate-900 bg-slate-950/30 py-4 text-center text-xs text-slate-500 mt-8">
+        &copy; 2026 HarumManis Agrotech Project. Built for Academic Presentation & Advanced Agricultural Analytics.
     </footer>
 
-    <!-- Script Implementation -->
+    <!-- Kerangka Kerja JavaScript Utama -->
     <script>
-        // Constants for the Harumanis growth model
-        const L = 450;    // Maximum asymptotic weight (grams)
-        const k = 0.65;   // Growth rate constant
-        const t0 = 6.0;   // Week of maximum growth (inflection point)
+        // Deklarasi variabel global parameter model matematika
+        let L = 420;
+        let k = 0.08;
+        let t0 = 50;
+        let myChart = null;
 
-        // Mathematical functions
-        // f(t) = Cumulative Weight
-        function getWeight(t) {
-            return L / (1 + Math.exp(-k * (t - t0)));
-        }
-
-        // f'(t) = Instantaneous growth rate
-        function getDerivative(t) {
-            const expTerm = Math.exp(-k * (t - t0));
-            const denominator = Math.pow(1 + expTerm, 2);
-            return (L * k * expTerm) / denominator;
-        }
-
-        // Biological assessment dictionary matching different developmental periods
-        const bioscienceInsights = [
-            {
-                range: [0, 2],
-                headline: "LAG PHASE - Cellular Division",
-                desc: "At this initial period, weight remains tiny, and growth rate is negligible. The newly pollinated fruitlet is dividing cells rapidly inside the ovaries. Calcium and trace elements are crucial at this stage to build strong cell walls."
-            },
-            {
-                range: [2, 4],
-                headline: "EARLY LOG PHASE - Cellular Expansion Begins",
-                desc: "The derivative is rising rapidly. Growth has picked up to over 20 grams/week. Water-soluble nitrogen and phosphorus are required immediately. Ensure consistent soil moisture to keep cell wall division stable."
-            },
-            {
-                range: [4, 5.5],
-                headline: "MID LOG PHASE - Rapid Expansion",
-                desc: "The fruit is entering its absolute most intense growth phase. The high derivative value demands extreme biological resources. Any sudden dry spell followed by rain at this point will burst the skin, causing unrecoverable fruit drop."
-            },
-            {
-                range: [5.5, 6.5],
-                headline: "INFLECTION POINT - Peak Kinetic Expansion",
-                desc: "The derivative peaks exactly at Week 6 (approx. 73 g/week). Growth is at its theoretical max speed. Ensure optimal potassium-loaded fertigation. This is the physiological tipping point; structural integrity is under maximum strain."
-            },
-            {
-                range: [6.5, 8],
-                headline: "LATE LOG PHASE - Starch Accumulation",
-                desc: "The growth rate is beginning to slow down, but the cumulative weight is now quite substantial, entering premium grades. The plant is transitioning from growing size to storing structural starch inside the flesh."
-            },
-            {
-                range: [8, 10],
-                headline: "DECELERATION PHASE - Ripening Commences",
-                desc: "Growth rate drops sharply. Fresh weight has safely passed 400 grams (Grade A potential). The fruit starts generating high ethylene levels, breaking down starches into glucose and fructose, creating the signature sweet aroma."
-            },
-            {
-                range: [10, 12],
-                headline: "MATURITY PLATEAU - Harvest Window",
-                desc: "The derivative is near zero. Cumulative growth has fully plateaued. The fruit has achieved maximum sugar accumulation, and sap flow is decreasing. Ready for manual harvesting by Perlis farmers!"
-            }
-        ];
-
-        // Retrieve layman explanation depending on current week
-        function getLaymanExplanation(t, weight, rate) {
-            const insight = bioscienceInsights.find(b => t >= b.range[0] && t <= b.range[1]) || bioscienceInsights[bioscienceInsights.length - 1];
-            
-            let grade = "Grade C";
-            if (weight > 400) grade = "Grade A (Premium Export Quality)";
-            else if (weight >= 351) grade = "Grade B";
-
-            return `
-                <strong class="block text-slate-100 font-semibold mb-1 text-sm">${insight.headline}</strong>
-                At exactly <span class="text-emerald-400 font-bold">${t.toFixed(1)} weeks</span> after anthesis, the mango weighs 
-                <span class="text-emerald-400 font-bold">${weight.toFixed(1)}g</span> (currently classified as 
-                <span class="text-yellow-400 font-bold">${grade}</span>). 
-                <br><br>
-                Its instantaneous growth rate is <span class="text-yellow-400 font-bold">${rate.toFixed(2)} grams per week</span>. 
-                In plain terms, <strong class="text-slate-100">${insight.desc}</strong>
-            `;
-        }
-
-        // Initialize Data for Chart
-        const labels = [];
-        const weightData = [];
-        const rateData = [];
-
-        // Generate points from week 0 to 12
-        for (let t = 0; t <= 12; t += 0.2) {
-            labels.push(t.toFixed(1));
-            weightData.push(getWeight(t));
-            rateData.push(getDerivative(t));
-        }
-
-        // Chart Setup
-        let chartInstance;
-        const ctx = document.getElementById('growthChart').getContext('2d');
-
-        // Create Custom Chart with dual y-axes
+        // Inisialisasi konfigurasi graf Chart.js
         function initChart() {
-            chartInstance = new Chart(ctx, {
+            const ctx = document.getElementById('growthChart').getContext('2d');
+            
+            // Menghasilkan titik data dari minggu ke-0 hingga ke-12
+            const dataPoints = generatePlotData();
+
+            myChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: labels,
+                    labels: dataPoints.labels,
                     datasets: [
                         {
-                            label: 'Weight f(t) [Grams]',
-                            data: weightData,
-                            borderColor: '#10b981', // Emerald 500
-                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderWidth: 3.5,
+                            label: 'Berat Buah f(t) (gram)',
+                            data: dataPoints.weight,
+                            borderColor: '#10b981',
+                            borderWidth: 3,
+                            backgroundColor: 'rgba(16, 185, 129, 0.03)',
                             fill: true,
+                            yAxisID: 'y',
                             tension: 0.2,
-                            yAxisID: 'yWeight',
+                            pointRadius: 0
                         },
                         {
-                            label: "Growth Rate f'(t) [g/week]",
-                            data: rateData,
-                            borderColor: '#eab308', // Yellow 500
-                            borderDash: [5, 5],
-                            borderWidth: 2.5,
-                            fill: false,
+                            label: "Kadar Pertumbuhan f'(t) (g/hari)",
+                            data: dataPoints.rate,
+                            borderColor: '#fbbf24',
+                            borderWidth: 2,
+                            borderDash: [4, 4],
+                            backgroundColor: 'transparent',
+                            yAxisID: 'y1',
                             tension: 0.2,
-                            yAxisID: 'yRate',
+                            pointRadius: 0
+                        },
+                        {
+                            label: 'Kedudukan Hari Semasa',
+                            data: [], // Diisi secara dinamis berdasarkan pergerakan slider
+                            borderColor: '#ef4444',
+                            borderWidth: 1,
+                            pointBackgroundColor: '#ef4444',
+                            pointRadius: 5,
+                            showLine: true
                         }
                     ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    interaction: {
-                        mode: 'index',
-                        intersect: false,
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255, 255, 255, 0.02)' },
+                            ticks: { color: '#94a3b8', font: { size: 10 } },
+                            title: { display: true, text: 'Hari Selepas Antesis (DAA)', color: '#64748b', font: { size: 10 } }
+                        },
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: { color: 'rgba(255, 255, 255, 0.03)' },
+                            ticks: { color: '#10b981', font: { size: 10 } },
+                            title: { display: true, text: 'Berat Kumulatif (g)', color: '#10b981', font: { size: 10 } }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: { drawOnChartArea: false },
+                            ticks: { color: '#fbbf24', font: { size: 10 } },
+                            title: { display: true, text: 'Kadar Pembesaran (g/hari)', color: '#fbbf24', font: { size: 10 } }
+                        }
                     },
                     plugins: {
                         legend: {
-                            display: false // Using custom legend
-                        },
-                        tooltip: {
-                            backgroundColor: '#0f172a',
-                            titleColor: '#f1f5f9',
-                            bodyColor: '#cbd5e1',
-                            borderColor: '#334155',
-                            borderWidth: 1,
-                            padding: 12,
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += context.parsed.y.toFixed(2);
-                                    }
-                                    return label;
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                color: '#1e293b'
-                            },
-                            ticks: {
-                                color: '#94a3b8',
-                                font: {
-                                    family: 'Plus Jakarta Sans'
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Weeks After Anthesis (WAA)',
-                                color: '#94a3b8',
-                                font: {
-                                    weight: 'bold'
-                                }
-                            }
-                        },
-                        yWeight: {
-                            type: 'linear',
-                            position: 'left',
-                            grid: {
-                                color: '#1e293b'
-                            },
-                            ticks: {
-                                color: '#10b981',
-                                font: {
-                                    weight: 'bold'
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Cumulative Weight (g)',
-                                color: '#10b981',
-                                font: {
-                                    weight: 'bold'
-                                }
-                            }
-                        },
-                        yRate: {
-                            type: 'linear',
-                            position: 'right',
-                            grid: {
-                                drawOnChartArea: false // prevent grid line overlap
-                            },
-                            ticks: {
-                                color: '#eab308',
-                                font: {
-                                    weight: 'bold'
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: 'Instantaneous Rate of Change f\'(t) [g/week]',
-                                color: '#eab308',
-                                font: {
-                                    weight: 'bold'
-                                }
-                            }
-                        }
-                    },
-                    onClick: (event, elements) => {
-                        if (elements.length > 0) {
-                            const index = elements[0].index;
-                            const week = parseFloat(labels[index]);
-                            // Update input slider and corresponding logic
-                            document.getElementById('weekSlider').value = week;
-                            if (animationInterval) toggleAnimation(); // Pause animation on manual click
-                            updateDashboard(week);
+                            position: 'top',
+                            labels: { color: '#94a3b8', boxWidth: 12, font: { size: 11 } }
                         }
                     }
                 }
             });
         }
 
-        // Dashboard Interactive Update
-        function updateDashboard(weekVal) {
-            const week = parseFloat(weekVal);
-            const weight = getWeight(week);
-            const rate = getDerivative(week);
+        // Penghitungan Model Logistik Matematika
+        function evaluateLogistic(t) {
+            return L / (1 + Math.exp(-k * (t - t0)));
+        }
 
-            // Update DOM text
-            document.getElementById('sliderValueDisplay').innerText = `${week.toFixed(1)} WAA`;
-            document.getElementById('telemetryWeek').innerText = `${week.toFixed(1)} WAA`;
-            document.getElementById('telemetryWeight').innerText = `${weight.toFixed(2)}g`;
-            document.getElementById('telemetryRate').innerText = `${rate.toFixed(2)} g/wk`;
+        // Penghitungan Terbitan Pertama (Kadar Pertumbuhan)
+        function evaluateDerivative(t) {
+            const expTerm = Math.exp(-k * (t - t0));
+            return (L * k * expTerm) / Math.pow(1 + expTerm, 2);
+        }
 
-            // Grade logic
-            let grade = "Grade C";
-            let gradeClass = "text-red-400";
-            if (weight > 400) {
-                grade = "Grade A (Premium Export)";
-                gradeClass = "text-emerald-400 font-bold";
-            } else if (weight >= 351) {
-                grade = "Grade B";
-                gradeClass = "text-yellow-400 font-bold";
-            }
-            const telGrade = document.getElementById('telemetryGrade');
-            telGrade.innerText = `Estimated Status: ${grade}`;
-            telGrade.className = `text-xs mt-1 block ${gradeClass}`;
-
-            // Layman explanation
-            document.getElementById('laymanExplanation').innerHTML = getLaymanExplanation(week, weight, rate);
-
-            // Update prediction based on week 12 projections
-            const finalExpectedWeight = getWeight(12);
-            document.getElementById('projectedSize').innerText = `${finalExpectedWeight.toFixed(0)}g`;
-            let finalGrade = "Grade C (Local Sales)";
-            let progressColor = "bg-red-500";
-            let progressPercent = 50;
-
-            if (finalExpectedWeight > 400) {
-                finalGrade = "Grade A (Export Ready)";
-                progressColor = "bg-emerald-500";
-                progressPercent = 95;
-            } else if (finalExpectedWeight >= 351) {
-                finalGrade = "Grade B (Premium Local)";
-                progressColor = "bg-yellow-500";
-                progressPercent = 75;
-            }
+        // Menghasilkan array data berkelanjutan untuk grafik
+        function generatePlotData() {
+            const labels = [];
+            const weight = [];
+            const rate = [];
             
-            document.getElementById('projectedGrade').innerText = finalGrade;
-            const progress = document.getElementById('gradeProgressBar');
-            progress.style.width = `${progressPercent}%`;
-            progress.className = `h-2 rounded-full ${progressColor}`;
+            // Loop dari hari ke-0 hingga ke-84 (12 minggu)
+            for(let day = 0; day <= 84; day += 2) {
+                labels.push(day);
+                weight.push(evaluateLogistic(day));
+                rate.push(evaluateDerivative(day));
+            }
+            return { labels, weight, rate };
+        }
 
-            // Highlight current index in ChartJS if instantiated
-            if (chartInstance) {
-                // Find nearest match index in labels
-                let closestIndex = 0;
-                let minDiff = Infinity;
-                for (let i = 0; i < labels.length; i++) {
-                    let diff = Math.abs(parseFloat(labels[i]) - week);
-                    if (diff < minDiff) {
-                        minDiff = diff;
-                        closestIndex = i;
-                    }
-                }
-                
-                chartInstance.setActiveElements([{ datasetIndex: 0, index: closestIndex }]);
-                chartInstance.update();
+        // Merender ulang graf apabila parameter diubah
+        function renderChart() {
+            if(!myChart) return;
+            const newData = generatePlotData();
+            myChart.data.datasets[0].data = newData.weight;
+            myChart.data.datasets[1].data = newData.rate;
+            myChart.update('none'); // Update graf dengan transisi lancar tanpa animasi ulang total
+        }
+
+        // Generator teks tafsiran awam perkembangan buah
+        function getLaymanInterpretation(day) {
+            if (day < 20) {
+                return "🟢 <b>Fasa Awal (Pembahagian Sel):</b> Buah baru terbentuk. Pertumbuhan agak perlahan pada peringkat awal sel aktif membahagi.";
+            } else if (day >= 20 && day < 45) {
+                return "⚡ <b>Fasa Eksponen (Pemanjangan Sel):</b> Struktur buah mula membesar dengan pantas. Kadar penyerapan air & nutrien sangat tinggi.";
+            } else if (day >= 45 && day <= 55) {
+                return "🔥 <b>Titik Inflexion (Kadar Maksimum):</b> Buah membesar pada kelajuan paling maksimum! Fasa kritikal penentuan saiz gred premium.";
+            } else if (day > 55 && day < 75) {
+                return "📈 <b>Fasa Penurunan Kadar:</b> Berat terus meningkat tetapi momentumnya mula perlahan kerana isi buah sudah mula padat.";
+            } else {
+                return "🏆 <b>Fasa Matang Pemantapan:</b> Berat buah mencapai tahap kestabilan maksimum (asymptote). Kulit & isi sedia dituai.";
             }
         }
 
+        // Mengemas kini papan pemuka data secara dinamik
+        function updateDashboard(weekValue) {
+            const currentDay = parseFloat(weekValue) * 7;
+            
+            // Hitung nilai berat dan kadar semasa
+            const wVal = evaluateLogistic(currentDay);
+            const rVal = evaluateDerivative(currentDay);
+
+            // Perbarui elemen teks HTML
+            document.getElementById('selectedWeekTxt').innerText = `Minggu ${parseFloat(weekValue).toFixed(1)}`;
+            document.getElementById('selectedDaaBadge').innerText = `HARI ${currentDay.toFixed(0)} DAA`;
+            
+            document.getElementById('dispWeight').textContent = `${wVal.toFixed(1)}g`;
+            document.getElementById('dispRate').textContent = `${rVal.toFixed(2)}g/hari`;
+            document.getElementById('laymanExplanation').innerHTML = getLaymanInterpretation(currentDay);
+
+            // Tambah penanda titik semasa pada garisan graf
+            if(myChart) {
+                myChart.data.datasets[2].data = [{x: currentDay, y: wVal}];
+                myChart.update('none');
+            }
+
+            // Kemas kini paparan Math LaTeX di dalam dokumen
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(document.body);
+            }
+        }
+
+        // Event listener untuk penyesuaian parameter (Kalibrasi)
+        const sliderL = document.getElementById('sliderL');
+        const sliderK = document.getElementById('sliderK');
+        const sliderT0 = document.getElementById('sliderT0');
+
+        sliderL.addEventListener('input', (e) => {
+            L = parseInt(e.target.value);
+            document.getElementById('txtL').textContent = `${L}g`;
+            document.getElementById('valL').textContent = `${L}g`;
+            renderChart();
+            updateDashboard(document.getElementById('weekSlider').value);
+        });
+
+        sliderK.addEventListener('input', (e) => {
+            k = parseFloat(e.target.value);
+            document.getElementById('txtK').textContent = k.toFixed(3);
+            document.getElementById('valK').textContent = k.toFixed(3);
+            renderChart();
+            updateDashboard(document.getElementById('weekSlider').value);
+        });
+
+        sliderT0.addEventListener('input', (e) => {
+            t0 = parseInt(e.target.value);
+            document.getElementById('txtT0').textContent = `${t0} DAA`;
+            document.getElementById('valT0').textContent = `${t0} DAA`;
+            renderChart();
+            updateDashboard(document.getElementById('weekSlider').value);
+        });
+
+        // Tombol reset parameter ke konfigurasi awal
+        document.getElementById('resetParamsBtn').addEventListener('click', () => {
+            L = 420;
+            k = 0.080;
+            t0 = 50;
+            sliderL.value = L;
+            sliderK.value = k;
+            sliderT0.value = t0;
+            document.getElementById('txtL').textContent = '420g';
+            document.getElementById('valL').textContent = '420g';
+            document.getElementById('txtK').textContent = '0.080';
+            document.getElementById('valK').textContent = '0.080';
+            document.getElementById('txtT0').textContent = '50 DAA';
+            document.getElementById('valT0').textContent = '50 DAA';
+            renderChart();
+            updateDashboard(document.getElementById('weekSlider').value);
+        });
+
         // ========================================================
-        // KOD ANIMASI AUTOMATIK
+        // LOGIK KOD ANIMASI AUTOMATIK (SINKRONISASI TINGGI)
         // ========================================================
         let animationInterval = null;
         const weekSlider = document.getElementById('weekSlider');
@@ -660,58 +439,68 @@
 
         function toggleAnimation() {
             if (animationInterval) {
-                // Jika sedang berjalan, kita PAUSE
+                // Hentikan animasi (Pause)
                 clearInterval(animationInterval);
                 animationInterval = null;
                 playIcon.innerText = "▶";
                 playText.innerText = "Mainkan Animasi";
-                playButton.className = "bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-500/10 min-w-[170px]";
+                playButton.className = "bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer shadow-lg shadow-emerald-500/10";
             } else {
-                // Jika berhenti, kita PLAY
+                // Jalankan animasi (Play)
                 playIcon.innerText = "⏸";
                 playText.innerText = "Hentikan Animasi";
-                playButton.className = "bg-yellow-500 hover:bg-yellow-600 text-slate-950 font-bold text-xs px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-yellow-500/10 min-w-[170px]";
+                playButton.className = "bg-yellow-500 hover:bg-yellow-600 text-slate-950 font-bold text-xs px-4 py-2 rounded-xl flex items-center gap-1.5 transition-all cursor-pointer shadow-lg shadow-yellow-500/10";
                 
-                // Jika slider berada di penghujung (Minggu 12), kita reset balik ke Minggu 0
+                // Mulakan dari minggu 0 semula sekiranya kedudukan semasa di akhir garisan masa
                 if (parseFloat(weekSlider.value) >= 12) {
                     weekSlider.value = 0;
                 }
 
                 animationInterval = setInterval(() => {
                     let currentWeek = parseFloat(weekSlider.value);
-                    currentWeek += 0.1; // Naikkan 0.1 setiap detik interval
+                    currentWeek += 0.1; // Menambah selang masa sebanyak 0.1 minggu
                     
                     if (currentWeek <= 12) {
                         weekSlider.value = currentWeek.toFixed(1);
                         updateDashboard(currentWeek);
                     } else {
-                        // Tamat animasi bila sampai minggu 12
+                        // Tamat secara automatik pada minggu ke-12
                         toggleAnimation();
                     }
-                }, 100); // Bergerak setiap 100ms (0.1 saat)
+                }, 100); // Bergerak setiap 100 milisaat
             }
         }
 
-        // Event Listeners
-        playButton.addEventListener('click', toggleAnimation);
+        // Pengaktifan kawalan animasi
+        if (playButton) {
+            playButton.addEventListener('click', toggleAnimation);
+        }
 
-        weekSlider.addEventListener('input', (e) => {
-            if (animationInterval) toggleAnimation(); // Pause animasi jika pengguna gerakkan slider secara manual
-            updateDashboard(e.target.value);
-        });
+        // Apabila pengguna melaras slider secara manual, hentikan simulasi automatik seketika
+        if (weekSlider) {
+            weekSlider.addEventListener('input', (e) => {
+                if (animationInterval) toggleAnimation(); 
+                updateDashboard(e.target.value);
+            });
+        }
 
-        // Initialize application on load
+        // Permulaan aplikasi sebaik sahaja tetingkap dimuatkan sepenuhnya
         window.onload = function() {
-            // Render KaTeX equations safely after DOM loads completely
             if (typeof renderMathInElement === 'function') {
                 renderMathInElement(document.body);
             }
             initChart();
-            updateDashboard(6.0); // Bermula di fasa tengah (inflection point)
-            lucide.createIcons();
+            
+            // Set kedudukan permulaan yang optimum pada titik tengah (inflection point)
+            if (weekSlider) {
+                weekSlider.value = 6.0;
+            }
+            updateDashboard(6.0);
+            
+            if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                lucide.createIcons();
+            }
         };
     </script>
 </body>
 </html>
-
-```
